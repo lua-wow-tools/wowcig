@@ -29,15 +29,20 @@ local tap = (function()
     log = print,
   })
   return function(f)
-    print('fetching', f)
-    local content = handle:readFile(f)
     local fn = path.join(args.extracts, version, f)
-    print('writing', fn)
-    path.mkdir(path.dirname(fn))
-    local fd = assert(io.open(fn, 'w'))
-    fd:write(content)
-    fd:close()
-    return content
+    if path.isfile(fn) then
+      local fd = assert(io.open(fn, 'r'))
+      local content = fd:read('*all')
+      fd:close()
+      return content
+    else
+      local content = handle:readFile(f)
+      path.mkdir(path.dirname(fn))
+      local fd = assert(io.open(fn, 'w'))
+      fd:write(content)
+      fd:close()
+      return content
+    end
   end
 end)()
 
