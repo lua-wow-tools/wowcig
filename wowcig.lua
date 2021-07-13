@@ -65,7 +65,7 @@ loadToc('Interface/FrameXML/FrameXML.toc')
 
 do
   local dbc = require('dbc')
-  local tocdb = load('DBFilesClient/ManifestInterfaceTOCData.db2')
+  local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
   for _, dir in dbc.rows(tocdb, 's') do
     local addonName = path.basename(path.normalize(dir))
     loadToc(path.join(path.normalize(dir), addonName .. '.toc'))
