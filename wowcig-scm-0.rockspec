@@ -9,6 +9,7 @@ dependencies = {
   'argparse',
   'lua-path',
   'luacasc',
+  'luadbc',
   'luafilesystem',
 }
 build = {

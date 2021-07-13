@@ -33,25 +33,41 @@ local load, save = (function()
     return handle:readFile(f)
   end
   local function save(f, c)
-    print('writing ', f)
-    local fn = path.join(args.extracts, version, f)
-    path.mkdir(path.dirname(fn))
-    local fd = assert(io.open(fn, 'w'))
-    fd:write(c)
-    fd:close()
+    if not c then
+      print('skipping', f)
+    else
+      print('writing ', f)
+      local fn = path.join(args.extracts, version, f)
+      path.mkdir(path.dirname(fn))
+      local fd = assert(io.open(fn, 'w'))
+      fd:write(c)
+      fd:close()
+    end
   end
   return load, save
 end)()
 
-do
-  local tocName = 'Interface/FrameXML/FrameXML.toc'
+local function loadToc(tocName)
   local toc = load(tocName)
   save(tocName, toc)
-  for line in toc:gmatch('[^\r\n]+') do
-    if line:sub(1, 1) ~= '#' then
-      local fn = path.normalize(path.join(path.dirname(tocName), line))
-      local content = load(fn)
-      save(fn, content)
+  if toc then
+    for line in toc:gmatch('[^\r\n]+') do
+      if line:sub(1, 1) ~= '#' then
+        local fn = path.normalize(path.join(path.dirname(tocName), line))
+        local content = load(fn)
+        save(fn, content)
+      end
     end
+  end
+end
+
+loadToc('Interface/FrameXML/FrameXML.toc')
+
+do
+  local dbc = require('dbc')
+  local tocdb = load('DBFilesClient/ManifestInterfaceTOCData.db2')
+  for _, dir in dbc.rows(tocdb, 's') do
+    local addonName = path.basename(path.normalize(dir))
+    loadToc(path.join(path.normalize(dir), addonName .. '.toc'))
   end
 end
