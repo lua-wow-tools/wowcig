@@ -2,4 +2,5 @@
 set -e
 eval $(.lua/bin/luarocks path)
 .lua/bin/luacheck .
+.lua/bin/luarocks build --no-install
 .lua/bin/lua wowcig.lua "$@"
