@@ -25,24 +25,19 @@ local tap = (function()
     cdn = cdn,
     ckey = ckey,
     cache = args.cache,
+    cacheFiles = true,
     locale = casc.locale.US,
     log = print,
   })
   return function(f)
+    local content = handle:readFile(f)
+    print('writing ', f)
     local fn = path.join(args.extracts, version, f)
-    if path.isfile(fn) then
-      local fd = assert(io.open(fn, 'r'))
-      local content = fd:read('*all')
-      fd:close()
-      return content
-    else
-      local content = handle:readFile(f)
-      path.mkdir(path.dirname(fn))
-      local fd = assert(io.open(fn, 'w'))
-      fd:write(content)
-      fd:close()
-      return content
-    end
+    path.mkdir(path.dirname(fn))
+    local fd = assert(io.open(fn, 'w'))
+    fd:write(content)
+    fd:close()
+    return content
   end
 end)()
 
