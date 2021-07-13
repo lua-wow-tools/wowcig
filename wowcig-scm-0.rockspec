@@ -8,9 +8,13 @@ dependencies = {
   'lua = 5.1',
   'argparse',
   'lua-path',
+  'luabitop',
   'luacasc',
   'luadbc',
   'luafilesystem',
+  'luasocket',
+  'lzlib',
+  'md5',
 }
 build = {
   type = 'none',
