@@ -14,7 +14,7 @@ local path = require('path')
 
 path.mkdir(args.cache)
 
-local tap = (function()
+local load, save = (function()
   local casc = require('casc')
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
@@ -29,24 +29,29 @@ local tap = (function()
     locale = casc.locale.US,
     log = print,
   })
-  return function(f)
-    local content = handle:readFile(f)
+  local function load(f)
+    return handle:readFile(f)
+  end
+  local function save(f, c)
     print('writing ', f)
     local fn = path.join(args.extracts, version, f)
     path.mkdir(path.dirname(fn))
     local fd = assert(io.open(fn, 'w'))
-    fd:write(content)
+    fd:write(c)
     fd:close()
-    return content
   end
+  return load, save
 end)()
 
 do
   local tocName = 'Interface/FrameXML/FrameXML.toc'
-  local toc = tap(tocName)
+  local toc = load(tocName)
+  save(tocName, toc)
   for line in toc:gmatch('[^\r\n]+') do
     if line:sub(1, 1) ~= '#' then
-      tap(path.normalize(path.join(path.dirname(tocName), line)))
+      local fn = path.normalize(path.join(path.dirname(tocName), line))
+      local content = load(fn)
+      save(fn, content)
     end
   end
 end
