@@ -1,5 +1,3 @@
-local path = require('path')
-
 local args = (function()
   local parser = require('argparse')()
   parser:option('-c --cache', 'cache directory', 'cache')
@@ -11,6 +9,10 @@ local args = (function()
   })
   return parser:parse()
 end)()
+
+local path = require('path')
+
+path.mkdir(args.cache)
 
 local tap = (function()
   local casc = require('casc')
