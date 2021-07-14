@@ -20,6 +20,9 @@ dependencies = {
 build = {
   type = 'none',
   install = {
+    bin = {
+      'bin/wowcig',
+    },
     lua = {
       wowcig = 'wowcig.lua',
     },
