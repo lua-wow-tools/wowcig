@@ -47,27 +47,50 @@ local load, save = (function()
   return load, save
 end)()
 
-local function loadToc(tocName)
+local function joinRelative(relativeTo, suffix)
+  return path.normalize(path.join(path.dirname(relativeTo), suffix))
+end
+
+local processFile = (function()
+  local lxp = require('lxp')
+  local function doProcessFile(fn)
+    local content = load(fn)
+    save(fn, content)
+    if (fn:sub(-4) == '.xml') then
+      local parser = lxp.new({
+        StartElement = function(_, name, attrs)
+          local lname = string.lower(name)
+          if (lname == 'include' or lname == 'script') and attrs.file then
+            doProcessFile(joinRelative(fn, attrs.file))
+          end
+        end,
+      })
+      parser:parse(content)
+      parser:close()
+    end
+  end
+  return doProcessFile
+end)()
+
+local function processToc(tocName)
   local toc = load(tocName)
   save(tocName, toc)
   if toc then
     for line in toc:gmatch('[^\r\n]+') do
       if line:sub(1, 1) ~= '#' then
-        local fn = path.normalize(path.join(path.dirname(tocName), line))
-        local content = load(fn)
-        save(fn, content)
+        processFile(joinRelative(tocName, line))
       end
     end
   end
 end
 
-loadToc('Interface/FrameXML/FrameXML.toc')
+processToc('Interface/FrameXML/FrameXML.toc')
 
 do
   local dbc = require('dbc')
   local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
   for _, dir in dbc.rows(tocdb, 's') do
     local addonName = path.basename(path.normalize(dir))
-    loadToc(path.join(path.normalize(dir), addonName .. '.toc'))
+    processToc(path.join(path.normalize(dir), addonName .. '.toc'))
   end
 end
