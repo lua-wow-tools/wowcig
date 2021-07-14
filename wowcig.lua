@@ -81,6 +81,7 @@ local function processToc(tocName)
         processFile(joinRelative(tocName, line))
       end
     end
+    processFile(joinRelative(tocName, 'Bindings.xml'))
   end
 end
 
