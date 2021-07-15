@@ -1,6 +1,6 @@
 rockspec_format = '3.0'
 package = 'wowcig'
-version = '0.1-0'
+version = '0.1-1'
 source = {
   url = 'git://github.com/ferronn-dev/wowcig',
 }
@@ -21,9 +21,6 @@ build = {
   type = 'none',
   install = {
     bin = {
-      'bin/wowcig',
-    },
-    lua = {
       wowcig = 'wowcig.lua',
     },
   },
