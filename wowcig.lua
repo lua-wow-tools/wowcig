@@ -91,7 +91,20 @@ local function processToc(tocName)
   end
 end
 
-processToc('Interface/FrameXML/FrameXML.toc')
+local productSuffixes = {
+  '',
+  '_Vanilla',
+  '_TBC',
+  '_Mainline',
+}
+
+local function processAllProductTocs(tocPrefix)
+  for _, suffix in ipairs(productSuffixes) do
+    processToc(tocPrefix .. suffix .. '.toc')
+  end
+end
+
+processAllProductTocs('Interface/FrameXML/FrameXML')
 
 do
   local dbc = require('dbc')
@@ -99,7 +112,7 @@ do
     local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
     for _, dir in dbc.rows(tocdb, 's') do
       local addonName = path.basename(path.normalize(dir))
-      processToc(path.join(path.normalize(dir), addonName .. '.toc'))
+      processAllProductTocs(path.join(path.normalize(dir), addonName))
     end
   end
   do
