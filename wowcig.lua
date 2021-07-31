@@ -4,8 +4,10 @@ local args = (function()
   parser:option('-e --extracts', 'extracts directory', 'extracts')
   parser:option('-p --product', 'WoW product'):choices({
     'wow',
+    'wowt',
     'wow_classic',
     'wow_classic_era',
+    'wow_classic_ptr',
   })
   return parser:parse()
 end)()
