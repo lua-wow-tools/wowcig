@@ -14,6 +14,13 @@ end)()
 
 local path = require('path')
 
+local function normalizePath(p)
+  -- path.normalize does not normalize x/../y to y.
+  -- Unfortunately, we need exactly that behavior for Interface_Vanilla etc.
+  -- links in per-product TOCs. We hack around it here by adding an extra dir.
+  return path.normalize('a/' .. p):sub(3)
+end
+
 path.mkdir(args.cache)
 
 local load, save = (function()
@@ -54,7 +61,7 @@ local load, save = (function()
 end)()
 
 local function joinRelative(relativeTo, suffix)
-  return path.normalize(path.join(path.dirname(relativeTo), suffix))
+  return normalizePath(path.join(path.dirname(relativeTo), suffix))
 end
 
 local processFile = (function()
@@ -111,8 +118,8 @@ do
   do
     local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
     for _, dir in dbc.rows(tocdb, 's') do
-      local addonName = path.basename(path.normalize(dir))
-      processAllProductTocs(path.join(path.normalize(dir), addonName))
+      local addonName = path.basename(normalizePath(dir))
+      processAllProductTocs(path.join(normalizePath(dir), addonName))
     end
   end
   do
