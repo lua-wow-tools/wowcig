@@ -94,7 +94,6 @@ local function processToc(tocName)
         processFile(joinRelative(tocName, line))
       end
     end
-    processFile(joinRelative(tocName, 'Bindings.xml'))
   end
 end
 
@@ -105,21 +104,23 @@ local productSuffixes = {
   '_Mainline',
 }
 
-local function processAllProductTocs(tocPrefix)
+local function processAllProductFiles(addonDir)
+  assert(addonDir:sub(1, 10) == 'Interface/', addonDir)
+  local addonName = path.basename(addonDir)
   for _, suffix in ipairs(productSuffixes) do
-    processToc(tocPrefix .. suffix .. '.toc')
+    processToc(path.join(addonDir, addonName .. suffix .. '.toc'))
+    processFile(path.join('Interface' .. suffix, addonDir:sub(11), 'Bindings.xml'))
   end
 end
 
-processAllProductTocs('Interface/FrameXML/FrameXML')
+processAllProductFiles('Interface/FrameXML')
 
 do
   local dbc = require('dbc')
   do
     local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
     for _, dir in dbc.rows(tocdb, 's') do
-      local addonName = path.basename(normalizePath(dir))
-      processAllProductTocs(path.join(normalizePath(dir), addonName))
+      processAllProductFiles(normalizePath(dir))
     end
   end
   do
