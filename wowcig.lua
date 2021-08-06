@@ -29,7 +29,7 @@ local load, save = (function()
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
   assert(bkey)
   print('loading', version)
-  local handle = casc.open({
+  local handle, err = casc.open({
     bkey = bkey,
     cdn = cdn,
     ckey = ckey,
@@ -38,6 +38,10 @@ local load, save = (function()
     locale = casc.locale.US,
     log = print,
   })
+  if not handle then
+    print('unable to open ' .. args.product .. ': ' .. err)
+    os.exit()
+  end
   local function load(f)
     return handle:readFile(f)
   end
