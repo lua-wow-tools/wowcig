@@ -23,7 +23,7 @@ end
 
 path.mkdir(args.cache)
 
-local load, save = (function()
+local load, save, onexit = (function()
   local casc = require('casc')
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
@@ -61,7 +61,10 @@ local load, save = (function()
       fd:close()
     end
   end
-  return load, save
+  local function onexit()
+    require('lfs').link(version, path.join(args.extracts, args.product), true)
+  end
+  return load, save, onexit
 end)()
 
 local function joinRelative(relativeTo, suffix)
@@ -140,3 +143,5 @@ do
     end)
   end
 end
+
+onexit()
