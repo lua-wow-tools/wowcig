@@ -1,6 +1,6 @@
 rockspec_format = '3.0'
 package = 'wowcig'
-version = '0.5-0'
+version = '0.6-0'
 description = {
   summary = 'WoW client interface generator',
   license = 'MIT',
@@ -10,8 +10,8 @@ description = {
   labels = {'wow'},
 }
 source = {
-  url = 'https://github.com/ferronn-dev/wowcig/archive/refs/tags/v0.5.tar.gz',
-  dir = 'wowcig-0.5',
+  url = 'https://github.com/ferronn-dev/wowcig/archive/refs/tags/v0.6.tar.gz',
+  dir = 'wowcig-0.6',
 }
 dependencies = {
   'lua = 5.1',
