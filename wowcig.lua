@@ -99,7 +99,7 @@ local function processToc(tocName)
   if toc then
     for line in toc:gmatch('[^\r\n]+') do
       if line:sub(1, 1) ~= '#' then
-        processFile(joinRelative(tocName, line))
+        processFile(joinRelative(tocName, line:gsub('%s*$', '')))
       end
     end
   end
