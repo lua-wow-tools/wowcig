@@ -13,6 +13,7 @@ local args = (function()
   return parser:parse()
 end)()
 
+local dbc = require('dbc')
 local path = require('path')
 
 local function normalizePath(p)
@@ -43,8 +44,15 @@ local load, save, onexit = (function()
     print('unable to open ' .. args.product .. ': ' .. err)
     os.exit()
   end
+  local fdids = {}
+  do
+    local filedb = assert(handle:readFile(1375801))  -- DBFilesClient/ManifestInterfaceData.db2
+    for fdid, fpath, fname in dbc.rows(filedb, 'ss') do
+      fdids[normalizePath(fpath .. fname)] = fdid
+    end
+  end
   local function load(f)
-    return handle:readFile(f)
+    return handle:readFile(fdids[f] or f)
   end
   local function save(f, c)
     if not c then
@@ -124,7 +132,6 @@ end
 processAllProductFiles('Interface/FrameXML')
 
 do
-  local dbc = require('dbc')
   do
     local tocdb = assert(load(1267335))  -- DBFilesClient/ManifestInterfaceTOCData.db2
     for _, dir in dbc.rows(tocdb, 's') do
