@@ -1,0 +1,12 @@
+name: release
+on:
+  release:
+    types:
+    - published
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - run: bin/setup.sh
+    - run: bin/upload.sh ${{ github.event.release.tag_name }} ${{ secrets.LUAROCKS_API_KEY }}
