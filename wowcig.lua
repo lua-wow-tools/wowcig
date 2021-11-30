@@ -10,6 +10,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
+  parser:flag('-v --verbose', 'verbose printing')
   return parser:parse()
 end)()
 
@@ -25,12 +26,18 @@ end
 
 path.mkdir(args.cache)
 
+local function log(...)
+  if args.verbose then
+    print(...)
+  end
+end
+
 local load, save, onexit = (function()
   local casc = require('casc')
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
   assert(bkey)
-  print('loading', version)
+  log('loading', version)
   local handle, err = casc.open({
     bkey = bkey,
     cdn = cdn,
@@ -38,7 +45,7 @@ local load, save, onexit = (function()
     cache = args.cache,
     cacheFiles = true,
     locale = casc.locale.US,
-    log = print,
+    log = log,
   })
   if not handle then
     print('unable to open ' .. args.product .. ': ' .. err)
@@ -56,9 +63,9 @@ local load, save, onexit = (function()
   end
   local function save(f, c)
     if not c then
-      print('skipping', f)
+      log('skipping', f)
     else
-      print('writing ', f)
+      log('writing ', f)
       local fn = path.join(args.extracts, version, f)
       path.mkdir(path.dirname(fn))
       local fd = assert(io.open(fn, 'w'))
