@@ -1,6 +1,7 @@
 local args = (function()
   local parser = require('argparse')()
   parser:option('-c --cache', 'cache directory', 'cache')
+  parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
   parser:option('-p --product', 'WoW product'):choices({
     'wow',
@@ -156,6 +157,14 @@ do
         write(string.format('_G[%q] = %q\n', row.BaseTag, row.TagText_lang))
       end
     end)
+  end
+  do
+    for _, db2 in ipairs(args.db2) do
+      local name = string.lower(db2)
+      save(('db2/%s.db2'):format(name), function(write)
+        write(assert(load(assert(dbds[name]).fdid)))
+      end)
+    end
   end
 end
 
