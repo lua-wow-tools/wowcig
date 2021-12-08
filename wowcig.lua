@@ -12,6 +12,7 @@ local args = (function()
     'wow_classic_ptr',
   })
   parser:flag('-v --verbose', 'verbose printing')
+  parser:flag('-z --skip-framexml', 'skip framexml extraction')
   return parser:parse()
 end)()
 
@@ -129,18 +130,16 @@ local productSuffixes = {
   '_Mainline',
 }
 
-local function processAllProductFiles(addonDir)
-  assert(addonDir:sub(1, 10) == 'Interface/', addonDir)
-  local addonName = path.basename(addonDir)
-  for _, suffix in ipairs(productSuffixes) do
-    processToc(path.join(addonDir, addonName .. suffix .. '.toc'))
-    processFile(path.join('Interface' .. suffix, addonDir:sub(11), 'Bindings.xml'))
+if not args.skip_framexml then
+  local function processAllProductFiles(addonDir)
+    assert(addonDir:sub(1, 10) == 'Interface/', addonDir)
+    local addonName = path.basename(addonDir)
+    for _, suffix in ipairs(productSuffixes) do
+      processToc(path.join(addonDir, addonName .. suffix .. '.toc'))
+      processFile(path.join('Interface' .. suffix, addonDir:sub(11), 'Bindings.xml'))
+    end
   end
-end
-
-processAllProductFiles('Interface/FrameXML')
-
-do
+  processAllProductFiles('Interface/FrameXML')
   do
     local dbd = dbds.manifestinterfacetocdata
     local tocdb = assert(load(dbd.fdid))
@@ -148,14 +147,13 @@ do
       processAllProductFiles(normalizePath(dir.FilePath))
     end
   end
-  do
-    for _, db2 in ipairs(args.db2) do
-      local name = string.lower(db2)
-      save(('db2/%s.db2'):format(name), function(write)
-        write(assert(load(assert(dbds[name]).fdid)))
-      end)
-    end
-  end
+end
+
+for _, db2 in ipairs(args.db2) do
+  local name = string.lower(db2)
+  save(('db2/%s.db2'):format(name), function(write)
+    write(assert(load(assert(dbds[name]).fdid)))
+  end)
 end
 
 onexit()
