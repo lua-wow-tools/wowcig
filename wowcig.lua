@@ -34,6 +34,17 @@ local function log(...)
   end
 end
 
+local encryptionKeys = (function()
+  local url = 'https://raw.githubusercontent.com/wowdev/TACTKeys/master/WoW.txt'
+  local wowtxt = require('ssl.https').request(url)
+  local ret = {}
+  for line in wowtxt:gmatch('[^\r\n]+') do
+    local k, v = line:match('^([0-9A-F]+) ([0-9A-F]+)')
+    ret[k:lower()] = v:lower()
+  end
+  return ret
+end)()
+
 local load, save, onexit, version = (function()
   local casc = require('casc')
   local url = 'http://us.patch.battle.net:1119/' .. args.product
@@ -46,6 +57,7 @@ local load, save, onexit, version = (function()
     ckey = ckey,
     cache = args.cache,
     cacheFiles = true,
+    keys = encryptionKeys,
     locale = casc.locale.US,
     log = log,
   })
