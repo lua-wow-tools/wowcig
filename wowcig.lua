@@ -69,7 +69,8 @@ local load, save, onexit, version = (function()
   do
     local dbd = dbds.manifestinterfacedata
     local filedb = assert(handle:readFile(dbd.fdid))
-    for row in dbd:rows(version, filedb) do
+    local build = assert(dbd:build(version))
+    for row in build:rows(filedb) do
       fdids[normalizePath(row.FilePath .. row.FileName)] = row.ID
     end
   end
@@ -155,7 +156,8 @@ if not args.skip_framexml then
   do
     local dbd = dbds.manifestinterfacetocdata
     local tocdb = assert(load(dbd.fdid))
-    for dir in dbd:rows(version, tocdb) do
+    local build = assert(dbd:build(version))
+    for dir in build:rows(tocdb) do
       processAllProductFiles(normalizePath(dir.FilePath))
     end
   end

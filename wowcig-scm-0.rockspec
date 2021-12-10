@@ -19,7 +19,7 @@ dependencies = {
   'lua-path',
   'luabitop',
   'luacasc',
-  'luadbd >= 0.2.1',
+  'luadbd = 0.3',
   'luaexpat',
   'luafilesystem',
   'luasocket',
