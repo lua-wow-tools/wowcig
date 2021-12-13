@@ -88,6 +88,14 @@ local load, save, onexit, version = (function()
   local function load(f)
     return handle:readFile(fdids[f] or f)
   end
+  local function addToZip(zf, fn, content)
+    local idx = zf:name_locate(fn)
+    if idx then
+      zf:replace(idx, 'string', content)
+    else
+      zf:add(fn, 'string', content)
+    end
+  end
   local function save(f, c)
     if not c then
       log('skipping', f)
@@ -101,8 +109,8 @@ local load, save, onexit, version = (function()
           table.insert(t, c)
         end
         local content = table.concat(t, '')
-        zfVersion:add(path.join(version, f), 'string', content)
-        zfProduct:add(path.join(args.product, f), 'string', content)
+        addToZip(zfVersion, path.join(version, f), content)
+        addToZip(zfProduct, path.join(args.product, f), content)
       else
         local fn = path.join(args.extracts, version, f)
         path.mkdir(path.dirname(fn))
