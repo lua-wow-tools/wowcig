@@ -12,7 +12,8 @@ local args = (function()
     'wow_classic_ptr',
   })
   parser:flag('-v --verbose', 'verbose printing')
-  parser:flag('-z --skip-framexml', 'skip framexml extraction')
+  parser:flag('-x --skip-framexml', 'skip framexml extraction')
+  parser:flag('-z --zip', 'write zip files instead of directory trees')
   return parser:parse()
 end)()
 
@@ -65,6 +66,16 @@ local load, save, onexit, version = (function()
     print('unable to open ' .. args.product .. ': ' .. err)
     os.exit()
   end
+  local zfVersion, zfProduct
+  if args.zip then
+    local z = require('brimworks.zip')
+    local fnVersion = path.join(args.extracts, version .. '.zip')
+    local fnProduct = path.join(args.extracts, args.product .. '.zip')
+    path.remove(fnVersion)
+    path.remove(fnProduct)
+    zfVersion = assert(z.open(fnVersion, z.OR(z.CREATE, z.EXCL)))
+    zfProduct = assert(z.open(fnProduct, z.OR(z.CREATE, z.EXCL)))
+  end
   local fdids = {}
   do
     local dbd = dbds.manifestinterfacedata
@@ -82,19 +93,32 @@ local load, save, onexit, version = (function()
       log('skipping', f)
     else
       log('writing ', f)
-      local fn = path.join(args.extracts, version, f)
-      path.mkdir(path.dirname(fn))
-      local fd = assert(io.open(fn, 'w'))
-      if type(c) == 'function' then
-        c(function(s) fd:write(s) end)
+      if zfVersion then
+        local t = {}
+        c(function(s) table.insert(t, s) end)
+        local content = table.concat(t, '')
+        zfVersion:add(path.join(version, f), 'string', content)
+        zfProduct:add(path.join(args.product, f), 'string', content)
       else
-        fd:write(c)
+        local fn = path.join(args.extracts, version, f)
+        path.mkdir(path.dirname(fn))
+        local fd = assert(io.open(fn, 'w'))
+        if type(c) == 'function' then
+          c(function(s) fd:write(s) end)
+        else
+          fd:write(c)
+        end
+        fd:close()
       end
-      fd:close()
     end
   end
   local function onexit()
-    require('lfs').link(version, path.join(args.extracts, args.product), true)
+    if zfVersion then
+      zfVersion:close()
+      zfProduct:close()
+    else
+      require('lfs').link(version, path.join(args.extracts, args.product), true)
+    end
   end
   return load, save, onexit, version
 end)()

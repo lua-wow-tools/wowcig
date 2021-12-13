@@ -17,6 +17,7 @@ dependencies = {
   'lua = 5.1',
   'argparse',
   'lua-path',
+  'lua-zip',
   'luabitop',
   'luacasc',
   'luadbd = 0.3',
