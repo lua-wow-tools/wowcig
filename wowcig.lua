@@ -95,7 +95,11 @@ local load, save, onexit, version = (function()
       log('writing ', f)
       if zfVersion then
         local t = {}
-        c(function(s) table.insert(t, s) end)
+        if type(c) == 'function' then
+          c(function(s) table.insert(t, s) end)
+        else
+          table.insert(t, c)
+        end
         local content = table.concat(t, '')
         zfVersion:add(path.join(version, f), 'string', content)
         zfProduct:add(path.join(args.product, f), 'string', content)
