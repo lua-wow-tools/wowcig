@@ -26,6 +26,7 @@ dependencies = {
   'luasocket',
   'lzlib',
   'md5',
+  'penlight',
 }
 build = {
   type = 'none',

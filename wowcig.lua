@@ -66,15 +66,12 @@ local load, save, onexit, version = (function()
     print('unable to open ' .. args.product .. ': ' .. err)
     os.exit()
   end
-  local zfVersion, zfProduct
+  local zipfile
   if args.zip then
     local z = require('brimworks.zip')
-    local fnVersion = path.join(args.extracts, version .. '.zip')
-    local fnProduct = path.join(args.extracts, args.product .. '.zip')
-    path.remove(fnVersion)
-    path.remove(fnProduct)
-    zfVersion = assert(z.open(fnVersion, z.OR(z.CREATE, z.EXCL)))
-    zfProduct = assert(z.open(fnProduct, z.OR(z.CREATE, z.EXCL)))
+    local filename = path.join(args.extracts, version .. '.zip')
+    path.remove(filename)
+    zipfile = assert(z.open(filename, z.OR(z.CREATE, z.EXCL)))
   end
   local fdids = {}
   do
@@ -88,20 +85,12 @@ local load, save, onexit, version = (function()
   local function load(f)
     return handle:readFile(fdids[f] or f)
   end
-  local function addToZip(zf, fn, content)
-    local idx = zf:name_locate(fn)
-    if idx then
-      zf:replace(idx, 'string', content)
-    else
-      zf:add(fn, 'string', content)
-    end
-  end
   local function save(f, c)
     if not c then
       log('skipping', f)
     else
       log('writing ', f)
-      if zfVersion then
+      if zipfile then
         local t = {}
         if type(c) == 'function' then
           c(function(s) table.insert(t, s) end)
@@ -109,8 +98,13 @@ local load, save, onexit, version = (function()
           table.insert(t, c)
         end
         local content = table.concat(t, '')
-        addToZip(zfVersion, path.join(version, f), content)
-        addToZip(zfProduct, path.join(args.product, f), content)
+        local fn = path.join(version, f)
+        local idx = zipfile:name_locate(fn)
+        if idx then
+          zipfile:replace(idx, 'string', content)
+        else
+          zipfile:add(fn, 'string', content)
+        end
       else
         local fn = path.join(args.extracts, version, f)
         path.mkdir(path.dirname(fn))
@@ -125,9 +119,9 @@ local load, save, onexit, version = (function()
     end
   end
   local function onexit()
-    if zfVersion then
-      zfVersion:close()
-      zfProduct:close()
+    if zipfile then
+      zipfile:close()
+      require('pl.file').write(path.join(args.extracts, args.product .. '.txt'), version .. '\n')
     else
       require('lfs').link(version, path.join(args.extracts, args.product), true)
     end
