@@ -61,6 +61,7 @@ local load, save, onexit, version = (function()
     keys = encryptionKeys,
     locale = casc.locale.US,
     log = log,
+    zerofillEncryptedChunks = true,
   })
   if not handle then
     print('unable to open ' .. args.product .. ': ' .. err)
