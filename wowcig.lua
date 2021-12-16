@@ -193,11 +193,25 @@ if not args.skip_framexml then
   end
 end
 
+local alldb2s = false
 for _, db2 in ipairs(args.db2) do
-  local name = string.lower(db2)
-  save(('db2/%s.db2'):format(name), function(write)
-    write(assert(load(assert(dbds[name]).fdid)))
-  end)
+  alldb2s = alldb2s or string.lower(db2) == 'all'
+end
+if alldb2s then
+  for name, dbd in pairs(dbds) do
+    if dbd:build(version) then
+      save(('db2/%s.db2'):format(name), function(write)
+        write(assert(load(dbd.fdid)))
+      end)
+    end
+  end
+else
+  for _, db2 in ipairs(args.db2) do
+    local name = string.lower(db2)
+    save(('db2/%s.db2'):format(name), function(write)
+      write(assert(load(assert(dbds[name]).fdid)))
+    end)
+  end
 end
 
 onexit()
