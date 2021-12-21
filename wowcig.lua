@@ -3,7 +3,7 @@ local args = (function()
   parser:option('-c --cache', 'cache directory', 'cache')
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
-  parser:option('-p --product', 'WoW product'):choices({
+  parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
     'wow_classic',
