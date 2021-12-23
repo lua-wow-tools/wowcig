@@ -200,6 +200,13 @@ for _, db2 in ipairs(args.db2) do
 end
 if alldb2s then
   for name, dbd in pairs(dbds) do
+    local kb = collectgarbage('count')
+    if kb > 1500000 then
+      log('collecting garbage at ', kb)
+      collectgarbage()
+      collectgarbage()
+      log('new value', collectgarbage('count'))
+    end
     if dbd:build(version) then
       save(('db2/%s.db2'):format(name), function(write)
         write(assert(load(dbd.fdid)))
