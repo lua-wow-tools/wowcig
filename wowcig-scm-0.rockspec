@@ -20,7 +20,7 @@ dependencies = {
   'lua-zip',
   'luabitop',
   'luacasc',
-  'luadbd = 0.3',
+  'luadbd = 0.3.1',
   'luaexpat',
   'luafilesystem',
   'luasocket',
