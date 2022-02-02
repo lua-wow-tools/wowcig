@@ -12,7 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
-  parser:flag('-r --resolvetocdn', 'When used in combination with --local, wowcig will use the CDN for data not available locally.')
+  parser:flag('-r --resolvetocdn','wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
   parser:flag('-z --zip', 'write zip files instead of directory trees')
@@ -63,7 +63,7 @@ local load, save, onexit, version = (function()
     end
     if not version then
       if not args.resolvetocdn then
-        print('No local data for ' .. args.product .. ' in ' .. args['local'] .. ': ' .. err)
+        print('No local data for ' .. args.product .. ' in ' .. args['local'])
         os.exit()
       end
       log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '. Will attempt to use CDN.')
