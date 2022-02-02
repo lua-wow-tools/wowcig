@@ -50,15 +50,14 @@ end)()
 local load, save, onexit, version = (function()
   local casc = require('casc')
   local handle, err, bkey, cdn, ckey, version
-  if(args['local']) then
-    local bldInfoFile = path.join(args['local'],'.build.info')
+  if (args['local']) then
+    local bldInfoFile = path.join(args['local'], '.build.info')
     local _, buildInfo = casc.localbuild(bldInfoFile)
-    local selectedBuild
 
-    for _,build in pairs(buildInfo) do
-      if(build.Product == args.product) then
-        selectedBuild = build
+    for _, build in pairs(buildInfo) do
+      if (build.Product == args.product) then
         version = selectedBuild.Version
+        break;
       end
     end
     if not version then
@@ -80,7 +79,7 @@ local load, save, onexit, version = (function()
     local url = 'http://us.patch.battle.net:1119/' .. args.product
     bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
     assert(bkey)
-    log('loading', version,url)
+    log('loading', version, url)
     handle, err = casc.open({
       bkey = bkey,
       cdn = cdn,
