@@ -49,8 +49,6 @@ end)()
 
 local load, save, onexit, version = (function()
   local casc = require('casc')
-  local handle, err
-  local url = 'http://us.patch.battle.net:1119/' .. args.product
   local handle, err, bkey, cdn, ckey, version
   if(args['local']) then
     local bldInfoFile = path.join(args['local'],'.build.info')
@@ -69,6 +67,7 @@ local load, save, onexit, version = (function()
       os.exit()
     end
   else
+    local url = 'http://us.patch.battle.net:1119/' .. args.product
     bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
     assert(bkey)
     log('loading', version)
