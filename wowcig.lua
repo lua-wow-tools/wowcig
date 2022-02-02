@@ -4,7 +4,6 @@ local args = (function()
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
   parser:option('-l --local','Use local WoW Directory instead of CDN.')
-  parser:option('-r --resolvetocdn','When used in combination with --local, wowcig will use the CDN for data not available locally.')
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -13,6 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
+  parser:flag('-r --resolvetocdn','When used in combination with --local, wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
   parser:flag('-z --zip', 'write zip files instead of directory trees')
