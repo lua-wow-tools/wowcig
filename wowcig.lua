@@ -3,7 +3,7 @@ local args = (function()
   parser:option('-c --cache', 'cache directory', 'cache')
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
-  parser:option('-l --local','Use local WoW Directory instead of CDN.')
+  parser:option('-l --local', 'Use local WoW Directory instead of CDN.')
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -12,7 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
-  parser:flag('-r --resolvetocdn','wowcig will use the CDN for data not available locally.')
+  parser:flag('-r --resolvetocdn', 'wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
   parser:flag('-z --zip', 'write zip files instead of directory trees')
@@ -51,12 +51,12 @@ end)()
 local load, save, onexit, version = (function()
   local casc = require('casc')
   local handle, err, bkey, cdn, ckey, version
-  if (args['local']) then
+  if args['local'] then
     local bldInfoFile = path.join(args['local'], '.build.info')
     local _, buildInfo = casc.localbuild(bldInfoFile)
 
     for _, build in pairs(buildInfo) do
-      if (build.Product == args.product) then
+      if build.Product == args.product then
         version = build.Version
         break
       end
@@ -122,7 +122,9 @@ local load, save, onexit, version = (function()
       if zipfile then
         local t = {}
         if type(c) == 'function' then
-          c(function(s) table.insert(t, s) end)
+          c(function(s)
+            table.insert(t, s)
+          end)
         else
           table.insert(t, c)
         end
@@ -139,7 +141,9 @@ local load, save, onexit, version = (function()
         path.mkdir(path.dirname(fn))
         local fd = assert(io.open(fn, 'w'))
         if type(c) == 'function' then
-          c(function(s) fd:write(s) end)
+          c(function(s)
+            fd:write(s)
+          end)
         else
           fd:write(c)
         end
@@ -167,7 +171,7 @@ local processFile = (function()
   local function doProcessFile(fn)
     local content = load(fn)
     save(fn, content)
-    if (fn:sub(-4) == '.xml') then
+    if fn:sub(-4) == '.xml' then
       local parser = lxp.new({
         StartElement = function(_, name, attrs)
           local lname = string.lower(name)
