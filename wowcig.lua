@@ -60,21 +60,20 @@ local load, save, onexit, version = (function()
       print('unable to open local directory' .. args['local'] .. ': ' .. err)
       os.exit()
     end
-  end
-  if not handle then
-      assert(bkey)
-      log('loading', version)
-      handle, err = casc.open({
-        bkey = bkey,
-        cdn = cdn,
-        ckey = ckey,
-        cache = args.cache,
-        cacheFiles = true,
-        keys = encryptionKeys,
-        locale = casc.locale.US,
-        log = log,
-        zerofillEncryptedChunks = true,
-      })
+  else
+    assert(bkey)
+    log('loading', version)
+    handle, err = casc.open({
+      bkey = bkey,
+      cdn = cdn,
+      ckey = ckey,
+      cache = args.cache,
+      cacheFiles = true,
+      keys = encryptionKeys,
+      locale = casc.locale.US,
+      log = log,
+      zerofillEncryptedChunks = true,
+    })
   end
   if not handle then
     print('unable to open ' .. args.product .. ': ' .. err)
