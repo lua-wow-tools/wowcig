@@ -52,25 +52,35 @@ local load, save, onexit, version = (function()
   local handle, err, bkey, cdn, ckey, version
   if(args['local']) then
     local bldInfoFile = path.join(args['local'],'.build.info')
-    _, _, _, version = casc.localbuild(bldInfoFile,casc.selectActiveBuild)
-    handle, err = casc.open(args['local'],{
-      keys = encryptionKeys,
-      locale = casc.locale.US,
-      log = log,
-      verifyHashes=false,
-      zerofillEncryptedChunks = true,
-    })
-    if handle then
-      log('using local directory instead of CDN.',args['local'])
-    else
-      print('unable to open local directory' .. args['local'] .. ': ' .. err)
-      os.exit()
+    local _, buildInfo = casc.localbuild(bldInfoFile)
+    local selectedBuild
+
+    for _,build in pairs(buildInfo) do
+      if(build.Product == args.product) then
+        selectedBuild = build
+        version = selectedBuild.Version
+      end
     end
-  else
+    if not version then
+      log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '.')
+    else
+      log('loading',version,args.product,args['local'])
+      local localConf = casc.conf(args['local'])
+      localConf.keys = encryptionKeys
+      handle, err = casc.open(localConf)
+      --[[ if handle then
+        log('using local directory instead of CDN.',args['local'])
+      else
+        print('unable to open local directory' .. args['local'] .. ': ' .. err)
+        os.exit()
+      end ]]
+    end
+  end
+  if not handle then
     local url = 'http://us.patch.battle.net:1119/' .. args.product
     bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
     assert(bkey)
-    log('loading', version)
+    log('loading', version,url)
     handle, err = casc.open({
       bkey = bkey,
       cdn = cdn,
