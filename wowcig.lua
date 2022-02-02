@@ -4,6 +4,7 @@ local args = (function()
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
   parser:option('-l --local','Use local WoW Directory instead of CDN.')
+  parser:option('-r --resolvetocdn','When used in combination with --local, wowcig will use the CDN for data not available locally.')
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -61,18 +62,16 @@ local load, save, onexit, version = (function()
       end
     end
     if not version then
-      log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '.')
+      if not args.resolvetocdn then
+        print('No local data for ' .. args.product .. ' in ' .. args['local'] .. ': ' .. err)
+        os.exit()
+      end
+      log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '. Will attempt to use CDN.')
     else
       log('loading',version,args.product,args['local'])
       local localConf = casc.conf(args['local'])
       localConf.keys = encryptionKeys
       handle, err = casc.open(localConf)
-      --[[ if handle then
-        log('using local directory instead of CDN.',args['local'])
-      else
-        print('unable to open local directory' .. args['local'] .. ': ' .. err)
-        os.exit()
-      end ]]
     end
   end
   if not handle then
