@@ -49,11 +49,18 @@ end)()
 
 local load, save, onexit, version = (function()
   local casc = require('casc')
-  local handle, err
   local url = 'http://us.patch.battle.net:1119/' .. args.product
-  local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
+  local handle, err, bkey, cdn, ckey, version
   if(args['local']) then
-    handle, err = casc.open(args['local'], {verifyHashes=false})
+    local bldInfoFile = path.join(args['local'],'.build.info')
+    _, _, _, version = casc.localbuild(bldInfoFile,casc.selectActiveBuild)
+    handle, err = casc.open(args['local'],{
+      keys = encryptionKeys,
+      locale = casc.locale.US,
+      log = log,
+      verifyHashes=false,
+      zerofillEncryptedChunks = true,
+    })
     if handle then
       log('using local directory instead of CDN.',args['local'])
     else
@@ -61,6 +68,7 @@ local load, save, onexit, version = (function()
       os.exit()
     end
   else
+    bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
     assert(bkey)
     log('loading', version)
     handle, err = casc.open({
