@@ -49,6 +49,7 @@ end)()
 
 local load, save, onexit, version = (function()
   local casc = require('casc')
+  local handle, err
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local handle, err, bkey, cdn, ckey, version
   if(args['local']) then
