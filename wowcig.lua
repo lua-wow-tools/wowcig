@@ -57,8 +57,8 @@ local load, save, onexit, version = (function()
 
     for _, build in pairs(buildInfo) do
       if (build.Product == args.product) then
-        version = selectedBuild.Version
-        break;
+        version = build.Version
+        break
       end
     end
     if not version then
@@ -68,7 +68,7 @@ local load, save, onexit, version = (function()
       end
       log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '. Will attempt to use CDN.')
     else
-      log('loading',version,args.product,args['local'])
+      log('loading', version,args.product, args['local'])
       local localConf = casc.conf(args['local'])
       localConf.keys = encryptionKeys
       handle, err = casc.open(localConf)
