@@ -12,6 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
+  parser:flag('-r --resolvetocdn','wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
   parser:flag('-z --zip', 'write zip files instead of directory trees')
@@ -49,20 +50,35 @@ end)()
 
 local load, save, onexit, version = (function()
   local casc = require('casc')
-  local handle, err
-  local url = 'http://us.patch.battle.net:1119/' .. args.product
-  local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
-  if(args['local']) then
-    handle, err = casc.open(args['local'], {verifyHashes=false})
-    if handle then
-      log('using local directory instead of CDN.',args['local'])
-    else
-      print('unable to open local directory' .. args['local'] .. ': ' .. err)
-      os.exit()
+  local handle, err, bkey, cdn, ckey, version
+  if (args['local']) then
+    local bldInfoFile = path.join(args['local'], '.build.info')
+    local _, buildInfo = casc.localbuild(bldInfoFile)
+
+    for _, build in pairs(buildInfo) do
+      if (build.Product == args.product) then
+        version = build.Version
+        break
+      end
     end
-  else
+    if not version then
+      if not args.resolvetocdn then
+        print('No local data for ' .. args.product .. ' in ' .. args['local'])
+        os.exit()
+      end
+      log('No local data for ' .. args.product .. ' in ' .. args['local'] .. '. Will attempt to use CDN.')
+    else
+      log('loading', version, args.product, args['local'])
+      local localConf = casc.conf(args['local'])
+      localConf.keys = encryptionKeys
+      handle, err = casc.open(localConf)
+    end
+  end
+  if not handle then
+    local url = 'http://us.patch.battle.net:1119/' .. args.product
+    bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
     assert(bkey)
-    log('loading', version)
+    log('loading', version, url)
     handle, err = casc.open({
       bkey = bkey,
       cdn = cdn,
