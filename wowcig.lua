@@ -3,6 +3,7 @@ local args = (function()
   parser:option('-c --cache', 'cache directory', 'cache')
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
+  parser:option('-l --local','Use local WoW Directory instead of CDN.')
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -48,21 +49,32 @@ end)()
 
 local load, save, onexit, version = (function()
   local casc = require('casc')
+  local handle, err
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
-  assert(bkey)
-  log('loading', version)
-  local handle, err = casc.open({
-    bkey = bkey,
-    cdn = cdn,
-    ckey = ckey,
-    cache = args.cache,
-    cacheFiles = true,
-    keys = encryptionKeys,
-    locale = casc.locale.US,
-    log = log,
-    zerofillEncryptedChunks = true,
-  })
+  if(args['local']) then
+    handle, err = casc.open(args['local'], {verifyHashes=false})
+    if handle then
+      log('using local directory instead of CDN.',args['local'])
+    else
+      print('unable to open local directory' .. args['local'] .. ': ' .. err)
+      os.exit()
+    end
+  else
+    assert(bkey)
+    log('loading', version)
+    handle, err = casc.open({
+      bkey = bkey,
+      cdn = cdn,
+      ckey = ckey,
+      cache = args.cache,
+      cacheFiles = true,
+      keys = encryptionKeys,
+      locale = casc.locale.US,
+      log = log,
+      zerofillEncryptedChunks = true,
+    })
+  end
   if not handle then
     print('unable to open ' .. args.product .. ': ' .. err)
     os.exit()
