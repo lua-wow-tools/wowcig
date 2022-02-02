@@ -12,7 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
-  parser:flag('-r --resolvetocdn','When used in combination with --local, wowcig will use the CDN for data not available locally.')
+  parser:flag('-r --resolvetocdn', 'When used in combination with --local, wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
   parser:flag('-z --zip', 'write zip files instead of directory trees')
