@@ -3,7 +3,7 @@ local args = (function()
   parser:option('-c --cache', 'cache directory', 'cache')
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
-  parser:option('-l --localDir','Use local WoW Directory instead of CDN.')
+  parser:option('-l --localdir','Use local WoW Directory instead of CDN.')
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -52,12 +52,13 @@ local load, save, onexit, version = (function()
   local handle, err
   local url = 'http://us.patch.battle.net:1119/' .. args.product
   local bkey, cdn, ckey, version = casc.cdnbuild(url, 'us')
-  if(args.localDir) then
-    handle, err = casc.open(args.localDir, {verifyHashes=false})
+  if(args.localdir) then
+    handle, err = casc.open(args.localdir, {verifyHashes=false})
     if handle then
-      log('using local directory instead of CDN.',args.localDir)
+      log('using local directory instead of CDN.',args.localdir)
     else
-      log('unable to open local directory',args.localDir)
+      print('unable to open local directory' .. args.localdir .. ': ' .. err)
+      os.exit()
     end
   end
   if not handle then
