@@ -17,7 +17,7 @@ repos:
   hooks:
   - id: luacheck
     name: luacheck
-    entry: .lua/bin/luacheck
+    entry: luacheck
     language: system
     types: [lua]
 - repo: meta
