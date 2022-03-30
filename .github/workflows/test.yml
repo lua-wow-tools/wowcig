@@ -7,11 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: |
-        sudo apt-get update && sudo apt-get -y install cargo libzip-dev shellcheck
-        cargo install --version=0.12.4 stylua
-        python3 -m pip install git+https://github.com/luarocks/hererocks
-        hererocks -l 5.1 -r 3.8.0 /usr/local
-        luarocks install luacheck
-        luarocks install --only-deps wowcig
+    - name: install deps
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install cargo libzip-dev shellcheck
+        sudo cargo install --version=0.12.4 stylua
+        sudo python3 -m pip install git+https://github.com/luarocks/hererocks
+        sudo hererocks -l 5.1 -r 3.8.0 /usr/local
+        sudo luarocks install luacheck
+        sudo luarocks install --only-deps wowcig
     - uses: pre-commit/action@v2.0.3
