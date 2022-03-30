@@ -1,0 +1,8 @@
+{
+  "name": "Debian",
+  "build": {
+    "dockerfile": "Dockerfile",
+  },
+  "postCreateCommand": "pre-commit install --install-hooks && bin/setup.sh",
+  "remoteUser": "vscode"
+}
