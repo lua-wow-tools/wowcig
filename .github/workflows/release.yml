@@ -8,5 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - run: sudo apt-get update && sudo apt-get -y install libzip-dev
     - run: bin/setup.sh
     - run: bin/upload.sh ${{ github.event.release.tag_name }} ${{ secrets.LUAROCKS_API_KEY }}
