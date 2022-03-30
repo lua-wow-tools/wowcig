@@ -8,6 +8,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: sudo apt-get update && sudo apt-get -y install libzip-dev shellcheck
-    - run: sudo cargo install --root=/usr/local --version=0.12.4 stylua
+    - run: sudo /usr/bin/cargo install --root=/usr/local --version=0.12.4 stylua
     - run: bin/setup.sh
     - uses: pre-commit/action@v2.0.3
