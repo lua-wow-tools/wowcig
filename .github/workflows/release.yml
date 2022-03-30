@@ -8,6 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - run: sudo apt-get update && sudo apt-get -y install libzip-dev
-    - run: bin/setup.sh
-    - run: bin/upload.sh ${{ github.event.release.tag_name }} ${{ secrets.LUAROCKS_API_KEY }}
+    - name: install deps
+      run: |
+        python3 -m pip install git+https://github.com/luarocks/hererocks
+        hererocks -l 5.1 -r 3.8.0 /usr/local
+        luarocks install dkjson
+    - name: luarocks upload
+      run: |
+        v=${{ github.event.release.tag_name }}
+        v=${v:1}
+        key=${{ secrets.LUAROCKS_API_KEY }}
+        spec=wowcig-${v}-0.rockspec
+        sed s/scm/"${v}"/g < wowcig-scm-0.rockspec > "${spec}"
+        luarocks upload --skip-pack --force --temp-key "${key}" "${spec}"

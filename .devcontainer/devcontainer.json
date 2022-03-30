@@ -3,6 +3,6 @@
   "build": {
     "dockerfile": "Dockerfile",
   },
-  "postCreateCommand": "pre-commit install --install-hooks && bin/setup.sh",
+  "postCreateCommand": "pre-commit install --install-hooks && luarocks build --no-install",
   "remoteUser": "vscode"
 }
