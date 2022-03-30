@@ -15,11 +15,11 @@ repos:
   - id: shellcheck
 - repo: local
   hooks:
-  - id: local-test
-    name: bin/test.sh
-    entry: bin/test.sh
+  - id: luacheck
+    name: luacheck
+    entry: .lua/bin/luacheck
     language: system
-    pass_filenames: false
+    types: [lua]
 - repo: meta
   hooks:
   - id: check-hooks-apply
