@@ -12,6 +12,7 @@ local args = (function()
     'wow_classic_era_ptr',
     'wow_classic_ptr',
   })
+  parser:flag('-b --blp', 'extract blp files')
   parser:flag('-r --resolvetocdn', 'wowcig will use the CDN for data not available locally.')
   parser:flag('-v --verbose', 'verbose printing')
   parser:flag('-x --skip-framexml', 'skip framexml extraction')
@@ -244,6 +245,17 @@ else
     save(('db2/%s.db2'):format(name), function(write)
       write(assert(load(assert(dbds[name]).fdid)))
     end)
+  end
+end
+
+if args.blp then
+  local dbd = dbds.manifestinterfacedata
+  local tocdb = assert(load(dbd.fdid))
+  local build = assert(dbd:build(version))
+  for row in build:rows(tocdb) do
+    if row.FileName:sub(-4) == '.blp' then
+      save(joinRelative(row.FilePath, row.FileName), load(row.ID))
+    end
   end
 end
 
