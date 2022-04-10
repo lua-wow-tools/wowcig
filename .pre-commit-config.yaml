@@ -11,6 +11,11 @@ repos:
   - id: stylua-system
 - repo: local
   hooks:
+  - id: build
+    name: build
+    entry: sh -c "luarocks build --no-install"
+    language: system
+    pass_filenames: false
   - id: luacheck
     name: luacheck
     entry: luacheck

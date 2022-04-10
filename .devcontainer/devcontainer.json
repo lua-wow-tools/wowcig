@@ -1,8 +1,8 @@
 {
-  "name": "Debian",
+  "name": "lua-wow-tools/wowcig",
   "build": {
     "dockerfile": "Dockerfile",
   },
-  "postCreateCommand": "pre-commit install --install-hooks && luarocks build --no-install",
+  "postCreateCommand": "pre-commit install && pre-commit run -a",
   "remoteUser": "vscode"
 }
