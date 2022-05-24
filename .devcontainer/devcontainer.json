@@ -1,7 +1,7 @@
 {
   "name": "lua-wow-tools/wowcig",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "Dockerfile"
   },
   "postCreateCommand": "pre-commit install && pre-commit run -a",
   "remoteUser": "vscode"
