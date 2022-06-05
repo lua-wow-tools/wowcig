@@ -243,7 +243,9 @@ else
   for _, db2 in ipairs(args.db2) do
     local name = string.lower(db2)
     save(('db2/%s.db2'):format(name), function(write)
-      write(assert(load(assert(dbds[name]).fdid)))
+      local dbd = assert(dbds[name], 'invalid dbd ' .. name)
+      local data = assert(load(dbd.fdid), 'error loading dbd ' .. name)
+      write(data)
     end)
   end
 end
