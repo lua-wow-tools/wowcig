@@ -8,6 +8,7 @@ local args = (function()
     'wow',
     'wowt',
     'wow_classic',
+    'wow_classic_beta',
     'wow_classic_era',
     'wow_classic_era_ptr',
     'wow_classic_ptr',
