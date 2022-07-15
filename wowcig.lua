@@ -7,6 +7,7 @@ local args = (function()
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
+    'wow_beta',
     'wow_classic',
     'wow_classic_beta',
     'wow_classic_era',
