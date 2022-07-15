@@ -228,6 +228,8 @@ if not args.skip_framexml then
       processAllProductFiles(normalizePath(dir.FilePath))
     end
   end
+  -- Generated API docs are not in beta manifests, unfortunately.
+  processAllProductFiles('Interface/AddOns/Blizzard_APIDocumentationGenerated')
 end
 
 local alldb2s = false
