@@ -205,6 +205,7 @@ local productSuffixes = {
   '',
   '_Vanilla',
   '_TBC',
+  '_Wrath',
   '_Mainline',
 }
 
