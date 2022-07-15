@@ -3,6 +3,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "features": {
+    "github-cli": {}
+  },
   "postCreateCommand": "pre-commit install && pre-commit run -a",
   "remoteUser": "vscode"
 }
