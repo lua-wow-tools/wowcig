@@ -4,6 +4,7 @@
     "dockerfile": "Dockerfile"
   },
   "features": {
+    "docker-from-docker": {},
     "github-cli": {}
   },
   "postCreateCommand": "pre-commit install && pre-commit run -a",
