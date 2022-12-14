@@ -7,6 +7,5 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         libzip-dev pre-commit python3-dev \
     && python3 -m pip install git+https://github.com/luarocks/hererocks \
     && hererocks -l 5.1 -r 3.8.0 /usr/local \
-    && luarocks install luacheck \
-    && luarocks install --only-deps wowcig
+    && luarocks install luacheck
 COPY --from=stylua-builder /opt/stylua /usr/local

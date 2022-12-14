@@ -21,7 +21,7 @@ dependencies = {
   'luabitop',
   'luacasc',
   'luadbd',
-  'luaexpat',
+  'luaexpat < 1.5.0',
   'luafilesystem',
   'luasocket',
   'lzlib',

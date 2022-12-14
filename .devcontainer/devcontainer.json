@@ -7,6 +7,6 @@
     "docker-from-docker": {},
     "github-cli": {}
   },
-  "postCreateCommand": "pre-commit install && pre-commit run -a",
+  "postCreateCommand": "pre-commit install",
   "remoteUser": "vscode"
 }

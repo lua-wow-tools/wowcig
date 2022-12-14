@@ -14,7 +14,7 @@ repos:
   hooks:
   - id: build
     name: build
-    entry: sh -c "luarocks build --no-install"
+    entry: sh -c "luarocks --local build --no-install"
     language: system
     pass_filenames: false
   - id: luacheck
