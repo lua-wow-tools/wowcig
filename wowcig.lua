@@ -1,9 +1,18 @@
+local locales = (function()
+  local t = {}
+  for k in require('pl.tablex').sort(require('casc').locale) do
+    table.insert(t, k)
+  end
+  return t
+end)()
+
 local args = (function()
   local parser = require('argparse')()
   parser:option('-c --cache', 'cache directory', 'cache')
   parser:option('-d --db2', 'db2 to extract'):count('*')
   parser:option('-e --extracts', 'extracts directory', 'extracts')
   parser:option('-l --local', 'Use local WoW Directory instead of CDN.')
+  parser:option('-a --locale', 'locale to use', 'US'):count(1):choices(locales)
   parser:option('-p --product', 'WoW product'):count(1):choices({
     'wow',
     'wowt',
@@ -90,7 +99,7 @@ local load, save, onexit, version = (function()
       cache = args.cache,
       cacheFiles = true,
       keys = encryptionKeys,
-      locale = casc.locale.US,
+      locale = casc.locale[args.locale],
       log = log,
       zerofillEncryptedChunks = true,
     })
